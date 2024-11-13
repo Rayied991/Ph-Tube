@@ -4,13 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ph-Tube</title>
-    <link rel="stylesheet" href="./style.css" />
+
     <link
       href="https://cdn.jsdelivr.net/npm/daisyui@4.12.13/dist/full.min.css"
       rel="stylesheet"
       type="text/css"
     />
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <header>
@@ -22,7 +23,12 @@
         </div>
         <div class="search">
           <label class="input input-bordered flex items-center gap-2">
-            <input type="text" class="grow" placeholder="Search" />
+            <input
+              id="searchInput"
+              type="text"
+              class="grow"
+              placeholder="Search"
+            />
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 16 16"
@@ -50,6 +56,25 @@
         class="w-11/12 mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 py-10"
       ></section>
     </main>
+    <!-- Open the modal using ID.showModal() method -->
+    <button
+      id="showModalData"
+      class="btn hidden"
+      onclick="customModal.showModal()"
+    >
+      open modal
+    </button>
+    <dialog id="customModal" class="modal modal-bottom sm:modal-middle">
+      <div class="modal-box">
+        <div id="modalContent"></div>
+        <div class="modal-action">
+          <form method="dialog">
+            <!-- if there is a button in form, it will close the modal -->
+            <button class="btn">Close</button>
+          </form>
+        </div>
+      </div>
+    </dialog>
     <script src="./Scripts/video.js"></script>
   </body>
 </html>

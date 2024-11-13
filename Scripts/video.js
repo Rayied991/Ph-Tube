@@ -28,27 +28,60 @@ const loadCatagories = () => {
 //     description: "'Smells Like Teen Spirit' by Oliver Harris captures the raw energy and rebellious spirit of youth. With over 5.4K views, this track brings a grunge rock vibe, featuring powerful guitar riffs and compelling vocals. Oliver's verified profile guarantees a quality musical journey that resonates with fans of dynamic, high-energy performances."
 // };
 
+const removeActiveClass=()=>{
+  const buttons=document.getElementsByClassName("category-btn");
+  console.log(buttons);
+  for (let btn of buttons){
+    btn.classList.remove("active");
+  }
+}
 //create loadVideos function
-const loadVideos = () => {
+const loadVideos = (searchText = "") => {
   // console.log("loadCatagories");
   //fetch data
-  fetch("https://openapi.programming-hero.com/api/phero-tube/videos")
+  fetch(`https://openapi.programming-hero.com/api/phero-tube/videos?title=${searchText}`)
     .then((res) => res.json())
     .then((data) => displayVideos(data.videos))
     .catch((error) => console.log(error));
 };
 
+const loadDetails=async(videoId)=>{
+  // console.log(videoId);
+  const uri=`https://openapi.programming-hero.com/api/phero-tube/video/${videoId}`;
+  const res=await fetch(uri);
+  const data=await res.json();
+  displayDetails(data.video);
+
+}
+const displayDetails=async(video)=>{
+  console.log(video);
+  const detailContainer=document.getElementById("modalContent");
+
+  detailContainer.innerHTML=`
+  <img src="${video.thumbnail}" />
+  <p>${video.description}</p>
+  `;
+  //show modal container
+  //way-1
+  // document.getElementById("showModalData").click();
+
+  //way2
+  document.getElementById("customModal").showModal();
+
+}
 const loadCategoryVideos = (id) => {
   //fetch
   fetch(`https://openapi.programming-hero.com/api/phero-tube/category/${id}`)
     .then((res) => res.json())
-    .then((data) =>{
-        const activeBtn=document.getElementById(`btn-${id}`);
-        // console.log(activeBtn);
-        activeBtn.classList.add("active");
-        displayVideos(data.category);
-
-    } )
+    .then((data) => {
+      //remove active class from everyone
+      removeActiveClass();
+      //add id class active
+      const activeBtn = document.getElementById(`btn-${id}`);
+      // console.log(activeBtn);
+      activeBtn.classList.add("active");
+      displayVideos(data.category);
+    })
     .catch((error) => console.log(error));
 };
 //create displayCatagories function
@@ -80,24 +113,22 @@ function getTimeString(time) {
 }
 //display videos
 const displayVideos = (videos) => {
-   
   const videoContainer = document.getElementById("videos");
-  videoContainer.innerHTML="";
-  if(videos.length===0){
+  videoContainer.innerHTML = "";
+  if (videos.length === 0) {
     videoContainer.classList.remove("grid");
-    videoContainer.innerHTML=`
+    videoContainer.innerHTML = `
     <div class="min-h-[300px] w-full flex flex-col gap-5 justify-center items-center">
     <img src="Assets/Icon.png" />
     <h2 class="text-center text-xl font-bold">No Content Here in this Category</h2>
     </div>
     `;
     return;
-  } 
-  else{
+  } else {
     videoContainer.classList.add("grid");
   }
   videos.forEach((video) => {
-    console.log(video);
+    // console.log(video);
     //create card to display
     const card = document.createElement("div");
     card.classList = "card card-compact";
@@ -133,15 +164,17 @@ const displayVideos = (videos) => {
                : ""
            }
           </div>
-           <div>
-           <p></p>
-           </div>
+           
+           <p> <button onclick="loadDetails('${video.video_id}')" class="btn btn-sm btn-error">Details</button> </p>
+          
         </div>
     
   </div>`;
     videoContainer.append(card);
   });
 };
-
+document.getElementById("searchInput").addEventListener("keyup",(e)=>{
+  loadVideos(e.target.value);
+});
 loadCatagories();
 loadVideos();
